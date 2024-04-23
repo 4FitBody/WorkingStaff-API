@@ -1,4 +1,4 @@
-namespace Just4Fit_WorkingStaff.Presentation.Dtos;
+namespace Just4Fit_WorkingStaff.Presentation.Exercises.Dtos;
 
 public class ExerciseDto
 {

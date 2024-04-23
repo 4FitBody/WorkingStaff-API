@@ -8,6 +8,7 @@ using Just4Fit_WorkingStaff.Users.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Just4Fit_WorkingStaff.Core.Tokens.Models;
 
 public class JustForFitWorkingStaffDbContext : IdentityDbContext<User, IdentityRole, string>
 {
@@ -15,6 +16,7 @@ public class JustForFitWorkingStaffDbContext : IdentityDbContext<User, IdentityR
     public DbSet<News> News { get; set; }
     public DbSet<Food> Food { get; set; }
     public DbSet<SportSupplement> SportSupplements { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public JustForFitWorkingStaffDbContext(DbContextOptions<JustForFitWorkingStaffDbContext> options) : base(options) { }
 }

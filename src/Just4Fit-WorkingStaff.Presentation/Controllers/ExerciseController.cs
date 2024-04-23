@@ -4,7 +4,7 @@ using Just4Fit_WorkingStaff.Core.Exercises.Models;
 using Just4Fit_WorkingStaff.Infrastructure.Exercises.Commands;
 using Just4Fit_WorkingStaff.Infrastructure.Exercises.Queries;
 using Just4Fit_WorkingStaff.Infrastructure.Services;
-using Just4Fit_WorkingStaff.Presentation.Dtos;
+using Just4Fit_WorkingStaff.Presentation.Exercises.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

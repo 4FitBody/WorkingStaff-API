@@ -9,7 +9,10 @@ using Just4Fit_WorkingStaff.Infrastructure.Food.Repositories;
 using Just4Fit_WorkingStaff.Infrastructure.News.Repositories;
 using Just4Fit_WorkingStaff.Infrastructure.SportSupplements.Repositories;
 using Just4Fit_WorkingStaff.Presentation.Options;
+using Just4Fit_WorkingStaff.Presentation.Roles.Models;
+using Just4Fit_WorkingStaff.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -48,6 +51,11 @@ builder.Services.AddDbContext<JustForFitWorkingStaffDbContext>(dbContextOptionsB
         o.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
     });
 });
+
+builder.Services.AddIdentity<User, IdentityRole>(options => {
+    options.Password.RequireNonAlphanumeric = true;
+})
+    .AddEntityFrameworkStores<JustForFitWorkingStaffDbContext>();
 
 builder.Services.AddControllers();
 
@@ -106,9 +114,28 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuers = jwtOptions.Issuers,
         };
     });
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope()) {
+    var dbContext = scope.ServiceProvider.GetRequiredService<JustForFitWorkingStaffDbContext>();
+    
+    await dbContext.Database.MigrateAsync();
+    
+    await dbContext.Database.EnsureCreatedAsync();
+
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    await roleManager.CreateAsync(new IdentityRole(DefaultRoles.Admin.ToString()));
+    
+    await roleManager.CreateAsync(new IdentityRole(DefaultRoles.Moderator.ToString()));
+    
+    await roleManager.CreateAsync(new IdentityRole(DefaultRoles.Trainer.ToString()));
+    
+    await roleManager.CreateAsync(new IdentityRole(DefaultRoles.Nutritionist.ToString()));
+}
 
 if (app.Environment.IsDevelopment())
 {
