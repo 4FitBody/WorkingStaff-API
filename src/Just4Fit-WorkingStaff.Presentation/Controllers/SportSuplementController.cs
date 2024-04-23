@@ -5,6 +5,7 @@ using Just4Fit_WorkingStaff.Infrastructure.Services;
 using Just4Fit_WorkingStaff.Infrastructure.SportSupplements.Commands;
 using Just4Fit_WorkingStaff.Infrastructure.SportSupplements.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -33,6 +34,7 @@ public class SportSuplementController : ControllerBase
     }
 
     [HttpGet]
+    [Route("/api/[controller]/[action]/{id}")]
     public async Task<IActionResult> Details(int? id)
     {
         var getByIdQuery = new GetByIdQuery(id);
@@ -43,6 +45,7 @@ public class SportSuplementController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Trainer, Nutritionist")]
     public async Task<IActionResult> Create([FromForm] SportSupplement sportSupplement, IFormFile file)
     {
         var rawPath = Guid.NewGuid().ToString() + file.FileName;
@@ -69,7 +72,8 @@ public class SportSuplementController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("[controller]/[action]/{id}")]
+    [Route("/api/[controller]/[action]/{id}")]
+    [Authorize(Roles = "Trainer, Nutritionist")]
     public async Task<IActionResult> Delete(int? id)
     {
         var createCommand = new DeleteCommand(id);
@@ -80,7 +84,8 @@ public class SportSuplementController : ControllerBase
     }
 
     [HttpPut]
-    [Route("[controller]/[action]/{id}")]
+    [Route("/api/[controller]/[action]/{id}")]
+    [Authorize(Roles = "Trainer, Nutritionist")]
     public async Task<IActionResult> Update(int? id, [FromBody] SportSupplement sportSupplement)
     {
         var createCommand = new UpdateCommand(id, sportSupplement);

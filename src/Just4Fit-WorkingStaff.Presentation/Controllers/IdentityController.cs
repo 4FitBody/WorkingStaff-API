@@ -8,6 +8,7 @@ using Just4Fit_WorkingStaff.Presentation.Options;
 using Just4Fit_WorkingStaff.Presentation.Tokens.Dtos;
 using Just4Fit_WorkingStaff.Presentation.Users.Dtos;
 using Just4Fit_WorkingStaff.Users.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -116,6 +117,7 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RegistrationAsync(RegistrationDto registrationDto)
     {
         var user = await this.userManager.FindByEmailAsync(registrationDto.Email!);

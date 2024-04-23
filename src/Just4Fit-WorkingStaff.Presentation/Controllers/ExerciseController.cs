@@ -6,6 +6,7 @@ using Just4Fit_WorkingStaff.Infrastructure.Exercises.Queries;
 using Just4Fit_WorkingStaff.Infrastructure.Services;
 using Just4Fit_WorkingStaff.Presentation.Exercises.Dtos;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -34,6 +35,7 @@ public class ExerciseController : ControllerBase
     }
 
     [HttpGet]
+    [Route("/api/[controller]/[action]/{id}")]
     public async Task<IActionResult> Details(int? id)
     {
         var getByIdQuery = new GetByIdQuery(id);
@@ -44,6 +46,7 @@ public class ExerciseController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Trainer")]
     public async Task<IActionResult> Create([FromForm] ExerciseDto exerciseDto, IFormFile file)
     {
         var rawPath = Guid.NewGuid().ToString() + file.FileName;
@@ -72,7 +75,8 @@ public class ExerciseController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("api/[controller]/[action]/{id}")]
+    [Route("/api/[controller]/[action]/{id}")]
+    [Authorize(Roles = "Trainer")]
     public async Task<IActionResult> Delete(int? id)
     {
         var createCommand = new DeleteCommand(id);
@@ -83,7 +87,8 @@ public class ExerciseController : ControllerBase
     }
 
     [HttpPut]
-    [Route("api/[controller]/[action]/{id}")]
+    [Route("/api/[controller]/[action]/{id}")]
+    [Authorize(Roles = "Trainer")]
     public async Task<IActionResult> Update(int? id, [FromBody] ExerciseDto exerciseDto)
     {
         var exercise = new Exercise

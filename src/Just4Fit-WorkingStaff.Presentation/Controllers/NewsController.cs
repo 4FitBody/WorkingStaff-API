@@ -5,6 +5,7 @@ using Just4Fit_WorkingStaff.Infrastructure.News.Commands;
 using Just4Fit_WorkingStaff.Infrastructure.News.Queries;
 using Just4Fit_WorkingStaff.Infrastructure.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -33,6 +34,7 @@ public class NewsController : ControllerBase
     }
 
     [HttpGet]
+    [Route("/api/[controller]/[action]/{id}")]
     public async Task<IActionResult> Details(int? id)
     {
         var getByIdQuery = new GetByIdQuery(id);
@@ -43,6 +45,7 @@ public class NewsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Moderator")]
     public async Task<IActionResult> Create([FromForm] News news, IFormFile file)
     {
         var rawPath = Guid.NewGuid().ToString() + file.FileName;
@@ -63,7 +66,8 @@ public class NewsController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("api/[controller]/[action]/{id}")]
+    [Route("/api/[controller]/[action]/{id}")]
+    [Authorize(Roles = "Moderator")]
     public async Task<IActionResult> Delete(int? id)
     {
         var createCommand = new DeleteCommand(id);
@@ -75,7 +79,8 @@ public class NewsController : ControllerBase
 
 
     [HttpPut]
-    [Route("api/[controller]/[action]/{id}")]
+    [Route("/api/[controller]/[action]/{id}")]
+    [Authorize(Roles = "Moderator")]
     public async Task<IActionResult> Update(int? id, [FromBody] News news)
     {
         var createCommand = new UpdateCommand(id, news);

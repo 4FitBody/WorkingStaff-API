@@ -6,6 +6,7 @@ using Just4Fit_WorkingStaff.Infrastructure.Food.Commands;
 using Just4Fit_WorkingStaff.Infrastructure.Food.Queries;
 using Just4Fit_WorkingStaff.Infrastructure.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -34,6 +35,7 @@ public class FoodController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Nutritionist")]
     public async Task<IActionResult> Create([FromForm] Food food, IFormFile imageFile, IFormFile contentFile)
     {
         var rawPath = Guid.NewGuid().ToString() + imageFile.FileName;
@@ -48,7 +50,7 @@ public class FoodController : ControllerBase
 
         var videoPath = videoRawPath.Replace(" ", "%20");
 
-        food.VideoUrl = "https://4fitbodystorage.blob.core.windows.net/images/" + videoPath;
+        food.VideoUrl = "https://4fitbodystorage.blob.core.windows.net/videos/" + videoPath;
 
         await this.blobContainerService.UploadAsync(contentFile.OpenReadStream(), videoRawPath);
 
@@ -60,6 +62,8 @@ public class FoodController : ControllerBase
     }
 
     [HttpDelete]
+    [Route("/api/[controller]/[action]/{id}")]
+    [Authorize(Roles = "Nutritionist")]
     public async Task<IActionResult> Delete(int? id)
     {
         var createCommand = new DeleteCommand(id);
@@ -70,6 +74,8 @@ public class FoodController : ControllerBase
     }
 
     [HttpPut]
+    [Route("/api/[controller]/[action]/{id}")]
+    [Authorize(Roles = "Nutritionist")]
     public async Task<IActionResult> Update(int? id, [FromBody] Food food)
     {
         var createCommand = new UpdateCommand(id, food);
@@ -80,6 +86,7 @@ public class FoodController : ControllerBase
     }
 
     [HttpGet]
+    [Route("/api/[controller]/[action]/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
         var getByIdQuery = new GetByIdQuery(id);
