@@ -28,9 +28,9 @@ public class NewsController : ControllerBase
     {
         var getAllQuery = new GetAllQuery();
 
-        var exercises = await this.sender.Send(getAllQuery);
+        var news = await this.sender.Send(getAllQuery);
 
-        return base.Ok(exercises);
+        return base.Ok(news);
     }
 
     [HttpGet]
@@ -57,6 +57,8 @@ public class NewsController : ControllerBase
         news.ImageUrl = "https://4fitbodystorage.blob.core.windows.net/images/" + path;
 
         await this.blobContainerService.UploadAsync(file.OpenReadStream(), rawPath);
+
+        news.IsApproved = true;
 
         var createCommand = new CreateCommand(news);
 

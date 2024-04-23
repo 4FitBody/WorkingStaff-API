@@ -31,7 +31,7 @@ public class ExerciseController : ControllerBase
 
         var exercises = await this.sender.Send(getAllQuery);
 
-        return base.Ok(exercises);
+        return base.Ok(exercises.Where(exercise => exercise.IsApproved));
     }
 
     [HttpGet]
@@ -76,7 +76,7 @@ public class ExerciseController : ControllerBase
 
     [HttpDelete]
     [Route("/api/[controller]/[action]/{id}")]
-    [Authorize(Roles = "Trainer")]
+    [Authorize(Roles = "Trainer, Moderator")]
     public async Task<IActionResult> Delete(int? id)
     {
         var createCommand = new DeleteCommand(id);

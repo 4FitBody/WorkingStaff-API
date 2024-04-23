@@ -29,9 +29,9 @@ public class FoodController : ControllerBase
     {
         var getAllQuery = new GetAllQuery();
 
-        var food = await this.sender.Send(getAllQuery);
+        var allFood = await this.sender.Send(getAllQuery);
 
-        return base.Ok(food);
+        return base.Ok(allFood.Where(food => food.IsApproved));
     }
 
     [HttpPost]
@@ -63,7 +63,7 @@ public class FoodController : ControllerBase
 
     [HttpDelete]
     [Route("/api/[controller]/[action]/{id}")]
-    [Authorize(Roles = "Nutritionist")]
+    [Authorize(Roles = "Nutritionist, Moderator")]
     public async Task<IActionResult> Delete(int? id)
     {
         var createCommand = new DeleteCommand(id);

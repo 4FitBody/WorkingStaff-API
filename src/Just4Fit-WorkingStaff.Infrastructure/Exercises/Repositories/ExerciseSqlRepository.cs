@@ -72,4 +72,13 @@ public class ExerciseSqlRepository : IExerciseRepository
     
         return searchedExercise!;
     }
+
+    public async Task ApproveAsync(int id)
+    {
+        var searchedExercise = await this.dbContext.Exercises.FirstOrDefaultAsync(exercise => exercise.Id == id);
+    
+        searchedExercise!.IsApproved = true;
+
+        await this.dbContext.SaveChangesAsync();
+    }
 }
