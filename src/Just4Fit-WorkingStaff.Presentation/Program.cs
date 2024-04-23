@@ -117,6 +117,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options => {
+    options.AddPolicy("BlazorWasmPolicy", corsBuilder => {
+        corsBuilder
+            .WithOrigins("http://localhost:5192")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope()) {
