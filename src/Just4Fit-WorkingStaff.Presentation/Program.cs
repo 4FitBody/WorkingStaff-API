@@ -8,7 +8,7 @@ using Just4Fit_WorkingStaff.Infrastructure.Exercises.Repositories;
 using Just4Fit_WorkingStaff.Infrastructure.Food.Repositories;
 using Just4Fit_WorkingStaff.Infrastructure.News.Repositories;
 using Just4Fit_WorkingStaff.Infrastructure.SportSupplements.Repositories;
-using JwtTokensApp.Options;
+using Just4Fit_WorkingStaff.Presentation.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

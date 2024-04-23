@@ -2,7 +2,7 @@
 
 using System.Text;
 
-namespace JwtTokensApp.Options;
+namespace Just4Fit_WorkingStaff.Presentation.Options;
 
 public class JwtOptions
 {
