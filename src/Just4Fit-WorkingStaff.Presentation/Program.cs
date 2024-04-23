@@ -59,7 +59,7 @@ builder.Services.AddSwaggerGen(options =>
 
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "4FitBody site for users api",
+        Title = "4FitBody (api for working staff)",
         Version = "v1"
     });
 
