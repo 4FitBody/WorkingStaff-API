@@ -14,6 +14,15 @@ public class FoodSqlRepository : IFoodRepository
         this.dbContext = dbContext;
     }
 
+    public async Task ApproveAsync(int id)
+    {
+        var searchedFood = await this.dbContext.Food.FirstOrDefaultAsync(exercise => exercise.Id == id);
+    
+        searchedFood!.IsApproved = true;
+
+        await this.dbContext.SaveChangesAsync();
+    }
+
     public async Task CreateAsync(Food food)
     {
         await this.dbContext.Food.AddAsync(food);

@@ -1,4 +1,4 @@
-namespace Just4Fit_WorkingStaff.Core.SportSupplements.Models.Repositories;
+namespace Just4Fit_WorkingStaff.Core.SportSupplements.Repositories;
 
 using Just4Fit_WorkingStaff.Core.SportSupplements.Models;
 
@@ -9,4 +9,5 @@ public interface ISportSupplementRepository
     Task UpdateAsync(int id, SportSupplement updatedSupplement);
     Task DeleteAsync(int id);
     Task<SportSupplement> GetByIdAsync(int id);
+    Task ApproveAsync(int id);
 }

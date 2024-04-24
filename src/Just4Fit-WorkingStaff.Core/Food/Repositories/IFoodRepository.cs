@@ -9,4 +9,5 @@ public interface IFoodRepository
     Task DeleteAsync(int id);
     Task UpdateAsync(int id, Food food);
     Task<Food> GetByIdAsync(int id);
+    Task ApproveAsync(int id);
 }

@@ -1,7 +1,7 @@
 namespace Just4Fit_WorkingStaff.Infrastructure.SportSupplements.Repositories;
 
 using Just4Fit_WorkingStaff.Core.SportSupplements.Models;
-using Just4Fit_WorkingStaff.Core.SportSupplements.Models.Repositories;
+using Just4Fit_WorkingStaff.Core.SportSupplements.Repositories;
 using Just4Fit_WorkingStaff.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -60,5 +60,14 @@ public class SportSupplementRepository : ISportSupplementRepository
         var searchedSportSupplement = await this.dbContext.SportSupplements.FirstOrDefaultAsync(exercise => exercise.Id == id);
     
         return searchedSportSupplement!;
+    }
+
+    public async Task ApproveAsync(int id)
+    {
+        var searchedSupplement = await this.dbContext.SportSupplements.FirstOrDefaultAsync(exercise => exercise.Id == id);
+    
+        searchedSupplement!.IsApproved = true;
+
+        await this.dbContext.SaveChangesAsync();
     }
 }

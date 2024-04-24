@@ -2,7 +2,7 @@ using System.Reflection;
 using Just4Fit_WorkingStaff.Core.Exercises.Repositories;
 using Just4Fit_WorkingStaff.Core.Food.Repositories;
 using Just4Fit_WorkingStaff.Core.News.Repositories;
-using Just4Fit_WorkingStaff.Core.SportSupplements.Models.Repositories;
+using Just4Fit_WorkingStaff.Core.SportSupplements.Repositories;
 using Just4Fit_WorkingStaff.Infrastructure.Data;
 using Just4Fit_WorkingStaff.Infrastructure.Exercises.Repositories;
 using Just4Fit_WorkingStaff.Infrastructure.Food.Repositories;

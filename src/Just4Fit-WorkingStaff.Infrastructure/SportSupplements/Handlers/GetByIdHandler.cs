@@ -3,7 +3,7 @@ namespace Just4Fit_WorkingStaff.Infrastructure.SportSupplements.Handlers;
 using Just4Fit_WorkingStaff.Infrastructure.SportSupplements.Queries;
 using Just4Fit_WorkingStaff.Core.SportSupplements.Models;
 using MediatR;
-using Just4Fit_WorkingStaff.Core.SportSupplements.Models.Repositories;
+using Just4Fit_WorkingStaff.Core.SportSupplements.Repositories;
 
 public class GetByIdHandler : IRequestHandler<GetByIdQuery, SportSupplement>
 {
