@@ -144,6 +144,19 @@ using (var scope = app.Services.CreateScope()) {
     await roleManager.CreateAsync(new IdentityRole(DefaultRoles.Trainer.ToString()));
     
     await roleManager.CreateAsync(new IdentityRole(DefaultRoles.Nutritionist.ToString()));
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+    var admin = new User{
+        Age = 30,
+        UserName = "Admin",
+        Surname = "Admin",
+        Email = "admin@gmail.com",   
+    };
+
+    await userManager.CreateAsync(admin, "Admin123!");
+
+    await userManager.AddToRoleAsync(admin, DefaultRoles.Admin.ToString());
 }
 
 if (app.Environment.IsDevelopment())
