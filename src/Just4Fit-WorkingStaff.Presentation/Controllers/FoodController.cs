@@ -5,9 +5,12 @@ using Just4Fit_WorkingStaff.Core.Food.Models;
 using Just4Fit_WorkingStaff.Infrastructure.Food.Commands;
 using Just4Fit_WorkingStaff.Infrastructure.Food.Queries;
 using Just4Fit_WorkingStaff.Infrastructure.Services;
+using Just4Fit_WorkingStaff.Presentation.Food.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
@@ -35,30 +38,48 @@ public class FoodController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Nutritionist")]
-    public async Task<IActionResult> Create([FromForm] Food food, IFormFile imageFile, IFormFile contentFile)
+    public async Task<IActionResult> Create(object foodContentJson)
     {
-        var rawPath = Guid.NewGuid().ToString() + imageFile.FileName;
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.None,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Formatting = Formatting.Indented
+        };
+
+        var foodContent = JsonConvert.DeserializeObject<FoodContent>(foodContentJson.ToString(), settings);  
+
+        var food = foodContent.Food;
+
+        var imageFileName = foodContent.ImageFileName;
+
+        var imageFileData = foodContent.ImageFileContent;
+
+        var contentFileName = foodContent.VideoFileName;
+
+        var contentFileData = foodContent.VideoFileContent;
+
+        var rawPath = Guid.NewGuid().ToString() + imageFileName;
 
         var path = rawPath.Replace(" ", "%20");
 
         food.ImageUrl = "https://4fitbodystorage.blob.core.windows.net/images/" + path;
 
-        await this.blobContainerService.UploadAsync(imageFile.OpenReadStream(), rawPath);
+        await this.blobContainerService.UploadAsync(new MemoryStream(imageFileData!), rawPath);
 
-        var videoRawPath = Guid.NewGuid().ToString() + contentFile.FileName;
+        var videoRawPath = Guid.NewGuid().ToString() + contentFileName;
 
         var videoPath = videoRawPath.Replace(" ", "%20");
 
-        food.VideoUrl = "https://4fitbodystorage.blob.core.windows.net/videos/" + videoPath;
+        food.VideoUrl = "https://4fitbodystorage.blob.core.windows.net/images/" + videoPath;
 
-        await this.blobContainerService.UploadAsync(contentFile.OpenReadStream(), videoRawPath);
+        await this.blobContainerService.UploadAsync(new MemoryStream(contentFileData!), videoRawPath);
 
         var createCommand = new CreateCommand(food);
 
         await this.sender.Send(createCommand);
 
-        return base.RedirectToAction("Index");
+        return base.Ok();
     }
 
     [HttpDelete]

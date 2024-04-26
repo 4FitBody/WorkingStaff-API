@@ -174,4 +174,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseCors("BlazorWasmPolicy");
+
 app.Run();

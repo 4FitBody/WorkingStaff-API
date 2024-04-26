@@ -4,9 +4,11 @@ using Just4Fit_WorkingStaff.Core.SportSupplements.Models;
 using Just4Fit_WorkingStaff.Infrastructure.Services;
 using Just4Fit_WorkingStaff.Infrastructure.SportSupplements.Commands;
 using Just4Fit_WorkingStaff.Infrastructure.SportSupplements.Queries;
+using Just4Fit_WorkingStaff.Presentation.SportSuplements.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
@@ -46,23 +48,36 @@ public class SportSuplementController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Trainer, Nutritionist")]
-    public async Task<IActionResult> Create([FromForm] SportSupplement sportSupplement, IFormFile file)
+    public async Task<IActionResult> Create(object sportSupplementContent)
     {
-        var rawPath = Guid.NewGuid().ToString() + file.FileName;
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.None,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Formatting = Formatting.Indented
+        };
+
+        var supplementContent = JsonConvert.DeserializeObject<SportSupplementContent>(sportSupplementContent.ToString()!, settings);  
+
+        var imageFileName = supplementContent!.ImageFileName;
+
+        var imageFileData = supplementContent.ImageFileContent;
+
+        var rawPath = Guid.NewGuid().ToString() + imageFileName;
 
         var path = rawPath.Replace(" ", "%20");
 
         var supplement = new SportSupplement
         {
-            Name = sportSupplement.Name,
-            Description = sportSupplement.Description,
-            ManufactureCountry = sportSupplement.ManufactureCountry,
-            Quantity = sportSupplement.Quantity,
+            Name = supplementContent!.SportSupplement!.Name,
+            Description = supplementContent!.SportSupplement!.Description,
+            ManufactureCountry = supplementContent!.SportSupplement!.ManufactureCountry,
+            Quantity = supplementContent!.SportSupplement!.Quantity,
             IsApproved = false,
             ImageUrl = "https://4fitbodystorage.blob.core.windows.net/images/" + path,
         };
 
-        await this.blobContainerService.UploadAsync(file.OpenReadStream(), rawPath);
+        await this.blobContainerService.UploadAsync(new MemoryStream(imageFileData), rawPath);
 
         var createCommand = new CreateCommand(supplement);
 

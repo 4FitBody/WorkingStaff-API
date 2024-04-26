@@ -5,9 +5,11 @@ using Just4Fit_WorkingStaff.Infrastructure.Exercises.Commands;
 using Just4Fit_WorkingStaff.Infrastructure.Exercises.Queries;
 using Just4Fit_WorkingStaff.Infrastructure.Services;
 using Just4Fit_WorkingStaff.Presentation.Exercises.Dtos;
+using Just4Fit_WorkingStaff.Presentation.Exercises.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
@@ -47,25 +49,38 @@ public class ExerciseController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Trainer")]
-    public async Task<IActionResult> Create([FromForm] ExerciseDto exerciseDto, IFormFile file)
+    public async Task<IActionResult> Create(object exerciseContentJson)
     {
-        var rawPath = Guid.NewGuid().ToString() + file.FileName;
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.None,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Formatting = Formatting.Indented
+        };
+
+        var exerciseContent = JsonConvert.DeserializeObject<ExerciseContent>(exerciseContentJson.ToString()!, settings);  
+
+        var imageFileName = exerciseContent!.ImageFileName;
+
+        var imageFileData = exerciseContent.ImageFileContent;
+
+        var rawPath = Guid.NewGuid().ToString() + imageFileName;
 
         var path = rawPath.Replace(" ", "%20");
 
         var exercise = new Exercise
         {
-            Name = exerciseDto.Name,
-            BodyPart = exerciseDto.BodyPart,
-            Equipment = exerciseDto.Equipment,
-            Target = exerciseDto.Target,
+            Name = exerciseContent.Exercise!.Name,
+            BodyPart = exerciseContent.Exercise.BodyPart,
+            Equipment = exerciseContent.Exercise.Equipment,
+            Target = exerciseContent.Exercise.Target,
             IsApproved = false,
             GifUrl = "https://4fitbodystorage.blob.core.windows.net/images/" + path,
-            SecondaryMuscles = exerciseDto.SecondaryMuscles!.Split("; "),
-            Instructions = exerciseDto.Instructions!.Split("; "),
+            SecondaryMuscles = exerciseContent.Exercise.SecondaryMuscles!,
+            Instructions = exerciseContent.Exercise.Instructions!,
         };
 
-        await this.blobContainerService.UploadAsync(file.OpenReadStream(), rawPath);
+        await this.blobContainerService.UploadAsync(new MemoryStream(imageFileData!), rawPath);
 
         var createCommand = new CreateCommand(exercise);
 

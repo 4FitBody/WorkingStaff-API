@@ -1,5 +1,7 @@
 using Azure.Identity;
+using Azure.Storage;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace Just4Fit_WorkingStaff.Infrastructure.Services;
 
@@ -12,7 +14,7 @@ public class BlobContainerService
     {
         this.blobServiceClient = new BlobServiceClient
         (
-            new Uri("https://Just4Fitstorage.blob.core.windows.net"),
+            new Uri("https://4fitbodystorage.blob.core.windows.net"),
             new DefaultAzureCredential()
         );
 

@@ -4,9 +4,11 @@ using Just4Fit_WorkingStaff.Core.News.Models;
 using Just4Fit_WorkingStaff.Infrastructure.News.Commands;
 using Just4Fit_WorkingStaff.Infrastructure.News.Queries;
 using Just4Fit_WorkingStaff.Infrastructure.Services;
+using Just4Fit_WorkingStaff.Presentation.News.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
@@ -46,17 +48,32 @@ public class NewsController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Moderator")]
-    public async Task<IActionResult> Create([FromForm] News news, IFormFile file)
+    public async Task<IActionResult> Create(object newsContentJson)
     {
-        var rawPath = Guid.NewGuid().ToString() + file.FileName;
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.None,
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Formatting = Formatting.Indented
+        };
+
+        var newsContent = JsonConvert.DeserializeObject<NewsContent>(newsContentJson.ToString()!, settings);  
+
+        var imageFileName = newsContent!.ImageFileName;
+
+        var imageFileData = newsContent.ImageFileContent;
+
+        var rawPath = Guid.NewGuid().ToString() + imageFileName;
 
         var path = rawPath.Replace(" ", "%20");
+
+        var news = newsContent!.News!;
 
         news.CreationDate = DateTime.Now;
 
         news.ImageUrl = "https://4fitbodystorage.blob.core.windows.net/images/" + path;
 
-        await this.blobContainerService.UploadAsync(file.OpenReadStream(), rawPath);
+        await this.blobContainerService.UploadAsync(new MemoryStream(imageFileData!), rawPath);
 
         news.IsApproved = true;
 
